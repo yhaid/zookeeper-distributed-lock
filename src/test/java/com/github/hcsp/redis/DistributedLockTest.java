@@ -1,15 +1,18 @@
 package com.github.hcsp.redis;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class DistributedLockTest {
-    /** A distributed test which starts 10 JVMs. */
+    /**
+     * A distributed test which starts 10 JVMs.
+     */
     @Test
     public void distributedTest() throws Exception {
         List<Process> processes = new ArrayList<>();
@@ -17,9 +20,7 @@ class DistributedLockTest {
             String javaPath = System.getProperty("java.home") + "/bin/java";
             String classPath = System.getProperty("java.class.path");
 
-            ProcessBuilder pb =
-                    new ProcessBuilder(
-                            javaPath, "-cp", classPath, "com.github.hcsp.redis.TestMain");
+            ProcessBuilder pb = new ProcessBuilder(javaPath, "-cp", classPath, "com.github.hcsp.redis.TestMain");
             processes.add(pb.start());
         }
 
