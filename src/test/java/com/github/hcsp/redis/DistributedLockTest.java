@@ -1,5 +1,8 @@
 package com.github.hcsp.redis;
 
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.RetryNTimes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -28,17 +31,19 @@ class DistributedLockTest {
             Assertions.assertEquals(0, process.waitFor());
         }
 
-        JedisPool pool = new JedisPool();
-        try (Jedis jedis = pool.getResource()) {
-            Assertions.assertEquals("10", jedis.get("KeyUnderTest"));
+        CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder().connectString("127.0.0.1:2181")
+                .retryPolicy(new RetryNTimes(1, 1000));
+        try (CuratorFramework client = builder.build();) {
+            client.start();
+            System.out.println(new String(client.getData().forPath("/key")));
         }
     }
 
     @AfterEach
     public void cleanUp() {
-        JedisPool pool = new JedisPool();
+/*        JedisPool pool = new JedisPool();
         try (Jedis jedis = pool.getResource()) {
             jedis.del("KeyUnderTest");
-        }
+        }*/
     }
 }
